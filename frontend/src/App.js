@@ -18,7 +18,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Booook
+          Bok
         </a>
       </header>
     </div>
