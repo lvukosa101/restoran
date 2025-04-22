@@ -19,6 +19,7 @@ function App() {
           rel="noopener noreferrer"
         >
           Bok
+          By
         </a>
       </header>
     </div>
