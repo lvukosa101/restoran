@@ -1,4 +1,6 @@
 import { useState } from "react";
+import '../styles/Login.css'; 
+import Button from '../components/Button';
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -11,9 +13,9 @@ function Login() {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
+    <div className="login-container">
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={handleSubmit}>
         <input 
           type="email" 
           placeholder="Email" 
@@ -28,7 +30,7 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
           required
         /><br /><br />
-        <button type="submit">Prijavi se</button>
+        <Button text="Prijavi se" type="submit" /> 
       </form>
     </div>
   );

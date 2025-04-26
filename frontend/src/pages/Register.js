@@ -1,5 +1,6 @@
 import { useState } from "react";
-
+import '../styles/Register.css'; 
+import Button from '../components/Button';
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -21,9 +22,9 @@ function Register() {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
+    <div className="register-container"> 
       <h2>Registracija</h2>
-      <form onSubmit={handleSubmit}>
+      <form className="register-form" onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Ime"
@@ -53,7 +54,7 @@ function Register() {
           required
         /><br /><br />
         {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit">Registriraj se</button>
+        <Button text="Registriraj se" type="submit" /> 
       </form>
     </div>
   );
