@@ -10,10 +10,17 @@ function GuestHome() {
     navigate("/");
   };
 
+  const handleStartReservation = () => {
+    navigate("/rezervacija");
+  };
+
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h2>Dobrodošli, {currentUser?.name}!</h2>
       <p>Ovo je početna stranica za gosta.</p>
+      <div style={{ margin: '20px' }}>
+        <Button text="Započni rezervaciju" onClick={handleStartReservation} />
+      </div>
       <Button text="Logout" onClick={handleLogout} />
     </div>
   );
