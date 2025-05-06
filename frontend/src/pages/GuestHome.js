@@ -7,6 +7,7 @@ function GuestHome() {
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('token');
     navigate("/");
   };
 
@@ -16,7 +17,7 @@ function GuestHome() {
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h2>Dobrodošli, {currentUser?.name}!</h2>
+      <h2>Dobrodošli, {currentUser?.ime}!</h2>
       <p>Ovo je početna stranica za gosta.</p>
       <div style={{ margin: '20px' }}>
         <Button text="Započni rezervaciju" onClick={handleStartReservation} />

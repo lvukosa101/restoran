@@ -30,9 +30,9 @@ function ReservationPage() {
   today.setHours(0, 0, 0, 0);
 
   const availableDates = {
-    "2025-05-01": true,
-    "2025-05-02": false,
-    "2025-05-03": true
+    "2025-05-08": true,
+    "2025-05-09": false,
+    "2025-05-10": true
   };
 
   const handleDateChange = (date) => {

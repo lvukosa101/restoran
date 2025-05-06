@@ -7,12 +7,13 @@ function AdminHome() {
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('token');
     navigate("/");
   };
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h2>Dobrodošli, {currentUser?.name}!</h2>
+      <h2>Dobrodošli, {currentUser?.ime}!</h2>
       <p>Ovo je početna stranica za administratora.</p>
       <Button text="Logout" onClick={handleLogout} />
     </div>
