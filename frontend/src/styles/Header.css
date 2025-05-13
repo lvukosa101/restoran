@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Playfair+Display&display=swap');
+
+.header {
+  background-color: #222; 
+  padding: 0.5rem 2rem; 
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #cd7f32; 
+  text-shadow: 0 0 8px rgba(205, 127, 50, 0.6); 
+  display: flex;
+  align-items: center;
+  font-family: 'Cinzel Decorative', cursive;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.logo-icon {
+  height: 32px; 
+  margin-right: 0.5rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  font-family: 'Playfair Display', serif;
+}
+
+.nav-links a:hover {
+  color: #cd7f32;
+}
+
+.auth-buttons button {
+  margin-left: 0.5rem;
+  padding: 6px 14px; /* lagano smanjen padding */
+  background-color: #cd7f32;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+}
+
+.auth-buttons button:hover {
+  background-color: #b26a28;
+} 

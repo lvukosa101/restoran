@@ -1,22 +1,58 @@
+
 .home-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  margin-top: 100px;
+}
+
+
+.home-button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 8px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.home-button:hover {
+  background-color: #45a049;
+}
+
+
+.slideshow-wrapper {
+  width: 100%;
+  max-width: 1000px;
+  text-align: center;
+  margin: 4rem auto 2rem auto;
+}
+
+.slideshow-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #2f2f2f;
+}
+
+/* Responsive za manje ekrane */
+@media (max-width: 768px) {
+  .home-container {
+    padding: 1rem;
+    margin-top: 80px;
   }
-  
+
   .home-button {
-    margin: 10px;
-    padding: 10px 20px;
-    font-size: 18px;
-    cursor: pointer;
-    border-radius: 8px;
-    border: none;
-    background-color: #4caf50;
-    color: white;
+    width: 100%;
+    max-width: 300px;
+    font-size: 16px;
   }
-  
-  .home-button:hover {
-    background-color: #45a049;
+
+  .slideshow-title {
+    font-size: 1.6rem;
   }
-  
+}

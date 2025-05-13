@@ -1,22 +1,30 @@
-import { useNavigate } from "react-router-dom";
 import '../styles/HomePage.css';
-import Button from '../components/Button';
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import HomeSection from '../components/HomeSection';
+import ImageSlideshow from '../components/ImageSlideshow';
+import AboutSection from '../components/AboutSection';
+import MenuSection from '../components/MenuSection';
+import ContactSection from '../components/ContactSection';
 
 function HomePage() {
-  const navigate = useNavigate();
-
   return (
-    <div className="home-container">
-      <h1>Dobrodošli!</h1>
-      <Button 
-        text="User Login" 
-        onClick={() => navigate("/login")} 
-      />
-      <Button 
-        text="User Registration" 
-        onClick={() => navigate("/register")} 
-      />
-    </div>
+    <>
+      <Header />
+      <main className="home-container">
+        <HomeSection />
+
+        <section className="slideshow-wrapper">
+          <ImageSlideshow />
+        </section>
+
+        <AboutSection />
+        <MenuSection />
+        <ContactSection />
+      </main>
+      <Footer />
+    </>
   );
 }
 

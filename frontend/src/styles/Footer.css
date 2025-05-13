@@ -1,0 +1,46 @@
+.footer {
+    background-color: #222;
+    color: white;
+    padding: 2rem 1rem 1rem;
+    font-family: 'Playfair Display', serif;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .footer-content {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  
+  .footer-section h4 {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 1.3rem;
+    color: #cd7f32; 
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 4px rgba(205, 127, 50, 0.4);
+  }
+  
+  .footer-section p {
+    margin: 0.3rem 0;
+    color: #ddd;
+    font-size: 0.95rem;
+  }
+  
+  .footer-section a {
+    color: #ddd;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .footer-section a:hover {
+    color: #cd7f32;
+  }
+  
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #aaa;
+  }

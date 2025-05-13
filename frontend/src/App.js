@@ -1,5 +1,6 @@
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
+
 import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -7,7 +8,6 @@ import GuestHome from './pages/GuestHome';
 import ModeratorHome from './pages/ModeratorHome';
 import AdminHome from './pages/AdminHome';
 import ReservationPage from './pages/ReservationPage';
-
 
 function App() {
   return (
@@ -19,7 +19,6 @@ function App() {
       <Route path="/moderator-home" element={<ModeratorHome />} />
       <Route path="/admin-home" element={<AdminHome />} />
       <Route path="/rezervacija" element={<ReservationPage />} />
-
     </Routes>
   );
 }
