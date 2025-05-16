@@ -2,19 +2,17 @@ import React, { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import Button from "../components/Button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const termini = ["12:00", "14:00", "16:00", "18:00", "20:00"];
-
-const stolovi = [
-  "Stol 1", "Stol 2", "Stol 3", "Stol 4", "Stol 5", "Stol 6",
-  "Stol 7", "Stol 8", "Stol 9", "Stol 10", "Stol 11", "Stol 12"
-];
+const sviTermini = ["12:00", "14:00", "16:00", "18:00", "20:00"];
+const sviStolovi = Array.from({ length: 12 }, (_, i) => `Stol ${i + 1}`);
 
 const formatDate = (date) => {
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, "0");
   const day = `${date.getDate()}`.padStart(2, "0");
-  return `${year}-${month}-${day}`; // npr. "2025-05-01"
+  return `${year}-${month}-${day}`;
 };
 
 function ReservationPage() {
@@ -22,68 +20,102 @@ function ReservationPage() {
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedTable, setSelectedTable] = useState("");
   const [showSummary, setShowSummary] = useState(false);
-  const [isDateAvailable, setIsDateAvailable] = useState(false);
   const [napomena, setNapomena] = useState("");
   const [reservationConfirmed, setReservationConfirmed] = useState(false);
+  const [zauzetiTerminiPoStolu, setZauzetiTerminiPoStolu] = useState({});
+  const [confirmedData, setConfirmedData] = useState(null);
 
+  const navigate = useNavigate();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const availableDates = {
-    "2025-05-08": true,
-    "2025-05-09": false,
-    "2025-05-10": true
-  };
-
-  const handleDateChange = (date) => {
-    const dateString = formatDate(date);
-    const isAvailable = !!availableDates[dateString];
+  const handleDateChange = async (date) => {
     setSelectedDate(date);
     setSelectedTime("");
     setSelectedTable("");
-    setIsDateAvailable(isAvailable);
+    setReservationConfirmed(false);
+    try {
+      const formatted = formatDate(date);
+      const res = await axios.get("http://localhost:5000/api/rezervacije/zauzeti-termini-po-datumu", {
+        params: { datum: formatted },
+      });
+      // Format: { "12:00": [1, 2, 3], "14:00": [5, 7] }
+      setZauzetiTerminiPoStolu(res.data || {});
+    } catch (err) {
+      console.error("Greška pri dohvaćanju zauzetih termina:", err);
+      setZauzetiTerminiPoStolu({});
+    }
   };
 
-  const tileContent = ({ date, view }) => {
-    if (view !== "month") return null;
-
-    const dateString = formatDate(date);
-
-    if (!availableDates.hasOwnProperty(dateString)) return null;
-
-    const isAvailable = availableDates[dateString];
-
-    return (
-      <div style={{ textAlign: "center", marginTop: 2 }}>
-        <span style={{
-          display: "inline-block",
-          width: 8,
-          height: 8,
-          borderRadius: "50%",
-          backgroundColor: isAvailable ? "green" : "red"
-        }} />
-      </div>
-    );
-  };
-
-  const handleConfirm = () => {
-    setShowSummary(false);
-    setReservationConfirmed(true);
+  const getSlobodniStoloviZaTermin = (termin) => {
+    const zauzetiStolovi = zauzetiTerminiPoStolu[termin] || [];
+    return sviStolovi.filter((s) => !zauzetiStolovi.includes(parseInt(s.replace("Stol ", ""))));
   };
 
   const isFormComplete = selectedDate && selectedTime && selectedTable;
 
+  const handleConfirm = async () => {
+    try {
+      const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
+      const brojStola = parseInt(selectedTable.replace("Stol ", ""));
+
+      const payload = {
+        korisnik_ime: currentUser.ime || "Gost",
+        korisnik_prezime: currentUser.prezime || "",
+        korisnik_email: currentUser.email || "",
+        datum: formatDate(selectedDate),
+        vrijeme: selectedTime,
+        broj_stola: brojStola,
+        napomena: napomena
+      };
+
+      await axios.post("http://localhost:5000/api/rezervacije", payload);
+
+      setConfirmedData({ ...payload, selectedTable });
+      setShowSummary(false);
+      setReservationConfirmed(true);
+      setNapomena("");
+
+      setTimeout(() => {
+        setSelectedTime("");
+        setSelectedTable("");
+        setReservationConfirmed(false);
+        setConfirmedData(null);
+      }, 3000);
+    } catch (err) {
+      console.error("Greška pri slanju rezervacije:", err.response?.data || err.message);
+      alert("Greška pri slanju rezervacije.");
+    }
+  };
+
   return (
-    <div style={{ padding: "40px" }}>
+    <div style={{ padding: "40px", position: "relative" }}>
+      <button
+        onClick={() => navigate("/user-profile")}
+        style={{
+          position: "absolute",
+          top: "20px",
+          right: "40px",
+          padding: "8px 16px",
+          backgroundColor: "#333",
+          color: "white",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer"
+        }}
+      >
+        Osobni profil
+      </button>
+
       <h2>REZERVACIJA TERMINA</h2>
 
-      {reservationConfirmed && (
+      {reservationConfirmed && confirmedData && (
         <div style={{ marginBottom: "30px", backgroundColor: "#e0ffe0", padding: "20px", borderRadius: "10px" }}>
           <h4>Rezervacija je potvrđena!</h4>
-          <p><strong>Datum:</strong> {selectedDate.toLocaleDateString()}</p>
-          <p><strong>Vrijeme:</strong> {selectedTime}</p>
-          <p><strong>Stol:</strong> {selectedTable}</p>
-          <p><strong>Napomena:</strong> {napomena || "(nema napomene)"}</p>
+          <p><strong>Datum:</strong> {confirmedData.datum}</p>
+          <p><strong>Vrijeme:</strong> {confirmedData.vrijeme}</p>
+          <p><strong>Stol:</strong> {confirmedData.selectedTable}</p>
+          <p><strong>Napomena:</strong> {confirmedData.napomena || "(nema napomene)"}</p>
         </div>
       )}
 
@@ -94,42 +126,43 @@ function ReservationPage() {
             onChange={handleDateChange}
             value={selectedDate}
             minDate={today}
-            tileContent={tileContent}
           />
 
-          {selectedDate && isDateAvailable && (
+          {selectedDate && (
             <>
-              <label style={{ marginTop: "20px", display: "block" }}>Odaberite termin:</label>
+              <label style={{ marginTop: "20px", display: "block" }}>Odaberite vrijeme:</label>
               <select
                 value={selectedTime}
                 onChange={(e) => setSelectedTime(e.target.value)}
                 style={{ display: "block", marginBottom: "20px" }}
               >
                 <option value="">--</option>
-                {termini.map((time) => (
-                  <option key={time} value={time}>{time}</option>
-                ))}
+                {sviTermini
+                  .filter((t) => getSlobodniStoloviZaTermin(t).length > 0)
+                  .map((time) => (
+                    <option key={time} value={time}>{time}</option>
+                  ))}
               </select>
+            </>
+          )}
 
-              <label>Odaberite stol:</label>
+          {selectedTime && (
+            <>
+              <label style={{ marginTop: "20px", display: "block" }}>Odaberite stol:</label>
               <select
                 value={selectedTable}
                 onChange={(e) => setSelectedTable(e.target.value)}
                 style={{ display: "block", marginBottom: "20px" }}
               >
                 <option value="">--</option>
-                {stolovi.map((table) => (
+                {getSlobodniStoloviZaTermin(selectedTime).map((table) => (
                   <option key={table} value={table}>{table}</option>
                 ))}
               </select>
-
-              <Button text="ODABERI" onClick={() => setShowSummary(true)} disabled={!isFormComplete} />
             </>
           )}
 
-          {selectedDate && !isDateAvailable && (
-            <p style={{ color: "red", marginTop: "20px" }}>Za odabrani datum nisu dostupni termini.</p>
-          )}
+          <Button text="ODABERI" onClick={() => setShowSummary(true)} disabled={!isFormComplete} />
         </div>
 
         <div>
