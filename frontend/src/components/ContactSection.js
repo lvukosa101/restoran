@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+
 
 function ContactSection() {
   const [formData, setFormData] = useState({
@@ -15,17 +17,18 @@ function ContactSection() {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Kontakt poruka:', formData);
-    alert('Vaša poruka je uspješno poslana!');
-    setFormData({
-      ime: '',
-      email: '',
-      telefon: '',
-      poruka: '',
-    });
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    await axios.post('http://localhost:5000/api/kontakt', formData);
+    alert('Poruka je uspješno poslana!');
+    setFormData({ ime: '', email: '', telefon: '', poruka: '' });
+  } catch (err) {
+    alert('Greška pri slanju poruke.');
+    console.error(err);
+  }
   };
+
 
   return (
     <section
@@ -98,7 +101,7 @@ function ContactSection() {
             placeholder="Broj mobitela"
             value={formData.telefon}
             onChange={handleChange}
-            required
+            //required
             style={inputStyle}
           />
           <textarea

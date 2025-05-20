@@ -4,6 +4,7 @@ import "react-calendar/dist/Calendar.css";
 import Button from "../components/Button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import HeaderLoggedIn from "../components/HeaderLoggedIn";
 
 const sviTermini = ["12:00", "14:00", "16:00", "18:00", "20:00"];
 const sviStolovi = Array.from({ length: 12 }, (_, i) => `Stol ${i + 1}`);
@@ -39,7 +40,6 @@ function ReservationPage() {
       const res = await axios.get("http://localhost:5000/api/rezervacije/zauzeti-termini-po-datumu", {
         params: { datum: formatted },
       });
-      // Format: { "12:00": [1, 2, 3], "14:00": [5, 7] }
       setZauzetiTerminiPoStolu(res.data || {});
     } catch (err) {
       console.error("Greška pri dohvaćanju zauzetih termina:", err);
@@ -89,127 +89,114 @@ function ReservationPage() {
   };
 
   return (
-    <div style={{ padding: "40px", position: "relative" }}>
-      <button
-        onClick={() => navigate("/user-profile")}
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "40px",
-          padding: "8px 16px",
-          backgroundColor: "#333",
-          color: "white",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer"
-        }}
-      >
-        Osobni profil
-      </button>
+    <>
+      <HeaderLoggedIn />
 
-      <h2>REZERVACIJA TERMINA</h2>
+      <div style={{ padding: "40px", position: "relative" }}>
+        <h2>REZERVACIJA TERMINA</h2>
 
-      {reservationConfirmed && confirmedData && (
-        <div style={{ marginBottom: "30px", backgroundColor: "#e0ffe0", padding: "20px", borderRadius: "10px" }}>
-          <h4>Rezervacija je potvrđena!</h4>
-          <p><strong>Datum:</strong> {confirmedData.datum}</p>
-          <p><strong>Vrijeme:</strong> {confirmedData.vrijeme}</p>
-          <p><strong>Stol:</strong> {confirmedData.selectedTable}</p>
-          <p><strong>Napomena:</strong> {confirmedData.napomena || "(nema napomene)"}</p>
-        </div>
-      )}
+        {reservationConfirmed && confirmedData && (
+          <div style={{ marginBottom: "30px", backgroundColor: "#e0ffe0", padding: "20px", borderRadius: "10px" }}>
+            <h4>Rezervacija je potvrđena!</h4>
+            <p><strong>Datum:</strong> {confirmedData.datum}</p>
+            <p><strong>Vrijeme:</strong> {confirmedData.vrijeme}</p>
+            <p><strong>Stol:</strong> {confirmedData.selectedTable}</p>
+            <p><strong>Napomena:</strong> {confirmedData.napomena || "(nema napomene)"}</p>
+          </div>
+        )}
 
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
-        <div style={{ maxWidth: "320px" }}>
-          <label>Odaberite datum:</label>
-          <Calendar
-            onChange={handleDateChange}
-            value={selectedDate}
-            minDate={today}
-          />
-
-          {selectedDate && (
-            <>
-              <label style={{ marginTop: "20px", display: "block" }}>Odaberite vrijeme:</label>
-              <select
-                value={selectedTime}
-                onChange={(e) => setSelectedTime(e.target.value)}
-                style={{ display: "block", marginBottom: "20px" }}
-              >
-                <option value="">--</option>
-                {sviTermini
-                  .filter((t) => getSlobodniStoloviZaTermin(t).length > 0)
-                  .map((time) => (
-                    <option key={time} value={time}>{time}</option>
-                  ))}
-              </select>
-            </>
-          )}
-
-          {selectedTime && (
-            <>
-              <label style={{ marginTop: "20px", display: "block" }}>Odaberite stol:</label>
-              <select
-                value={selectedTable}
-                onChange={(e) => setSelectedTable(e.target.value)}
-                style={{ display: "block", marginBottom: "20px" }}
-              >
-                <option value="">--</option>
-                {getSlobodniStoloviZaTermin(selectedTime).map((table) => (
-                  <option key={table} value={table}>{table}</option>
-                ))}
-              </select>
-            </>
-          )}
-
-          <Button text="ODABERI" onClick={() => setShowSummary(true)} disabled={!isFormComplete} />
-        </div>
-
-        <div>
-          <img src="/eva.png" alt="Restoran" style={{ width: "600px", height: "auto", border: "1px solid #ccc" }} />
-        </div>
-      </div>
-
-      {showSummary && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100vw",
-          height: "100vh",
-          backgroundColor: "rgba(0,0,0,0.5)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          zIndex: 999
-        }}>
-          <div style={{
-            backgroundColor: "#fff",
-            padding: "30px",
-            borderRadius: "15px",
-            boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
-            textAlign: "center",
-            minWidth: "300px"
-          }}>
-            <h4>Sažetak odabrane rezervacije:</h4>
-            <p><strong>Datum:</strong> {selectedDate.toLocaleDateString()}</p>
-            <p><strong>Vrijeme:</strong> {selectedTime}</p>
-            <p>{selectedTable}</p>
-            <textarea
-              placeholder="Unesite napomenu..."
-              value={napomena}
-              onChange={(e) => setNapomena(e.target.value)}
-              rows={3}
-              style={{ width: "100%", marginTop: "15px", padding: "10px", resize: "none" }}
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
+          <div style={{ maxWidth: "320px" }}>
+            <label>Odaberite datum:</label>
+            <Calendar
+              onChange={handleDateChange}
+              value={selectedDate}
+              minDate={today}
             />
-            <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "20px" }}>
-              <Button text="Povratak" onClick={() => setShowSummary(false)} />
-              <Button text="POTVRDI" onClick={handleConfirm} />
-            </div>
+
+            {selectedDate && (
+              <>
+                <label style={{ marginTop: "20px", display: "block" }}>Odaberite vrijeme:</label>
+                <select
+                  value={selectedTime}
+                  onChange={(e) => setSelectedTime(e.target.value)}
+                  style={{ display: "block", marginBottom: "20px" }}
+                >
+                  <option value="">--</option>
+                  {sviTermini
+                    .filter((t) => getSlobodniStoloviZaTermin(t).length > 0)
+                    .map((time) => (
+                      <option key={time} value={time}>{time}</option>
+                    ))}
+                </select>
+              </>
+            )}
+
+            {selectedTime && (
+              <>
+                <label style={{ marginTop: "20px", display: "block" }}>Odaberite stol:</label>
+                <select
+                  value={selectedTable}
+                  onChange={(e) => setSelectedTable(e.target.value)}
+                  style={{ display: "block", marginBottom: "20px" }}
+                >
+                  <option value="">--</option>
+                  {getSlobodniStoloviZaTermin(selectedTime).map((table) => (
+                    <option key={table} value={table}>{table}</option>
+                  ))}
+                </select>
+              </>
+            )}
+
+            <Button text="ODABERI" onClick={() => setShowSummary(true)} disabled={!isFormComplete} />
+          </div>
+
+          <div>
+            <img src="/eva.png" alt="Restoran" style={{ width: "600px", height: "auto", border: "1px solid #ccc" }} />
           </div>
         </div>
-      )}
-    </div>
+
+        {showSummary && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 999
+          }}>
+            <div style={{
+              backgroundColor: "#fff",
+              padding: "30px",
+              borderRadius: "15px",
+              boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+              textAlign: "center",
+              minWidth: "300px"
+            }}>
+              <h4>Sažetak odabrane rezervacije:</h4>
+              <p><strong>Datum:</strong> {selectedDate.toLocaleDateString()}</p>
+              <p><strong>Vrijeme:</strong> {selectedTime}</p>
+              <p>{selectedTable}</p>
+              <textarea
+                placeholder="Unesite napomenu..."
+                value={napomena}
+                onChange={(e) => setNapomena(e.target.value)}
+                rows={3}
+                style={{ width: "100%", marginTop: "15px", padding: "10px", resize: "none" }}
+              />
+              <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "20px" }}>
+                <Button text="Povratak" onClick={() => setShowSummary(false)} />
+                <Button text="POTVRDI" onClick={handleConfirm} />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 

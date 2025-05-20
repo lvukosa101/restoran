@@ -20,28 +20,43 @@ router.post('/', async (req, res) => {
   }
 });
 
-// POST – Višestruki unos računa
 router.post('/vise', async (req, res) => {
   const { korisnik_email, racuni } = req.body;
 
-  if (!Array.isArray(racuni)) {
-    return res.status(400).json({ message: 'Popis računa mora biti niz.' });
+  if (!Array.isArray(racuni) || racuni.length !== 5) {
+    return res.status(400).json({ message: 'Točno 5 računa je potrebno poslati.' });
   }
 
-  const rezultati = [];
-  for (const broj_racuna of racuni) {
-    try {
-      const existing = await Bill.findOne({ where: { broj_racuna } });
-      if (!existing) {
-        const novi = await Bill.create({ korisnik_email, broj_racuna });
-        rezultati.push(novi);
+  try {
+    const postojeci = await Bill.findAll({
+      where: {
+        broj_racuna: racuni
       }
-    } catch (err) {
-      console.error(`❌ Greška za račun ${broj_racuna}:`, err.message);
-    }
-  }
+    });
 
-  res.json({ spremljeno: rezultati.length, racuni: rezultati });
+    if (postojeci.length > 0) {
+      const vecPostoje = postojeci.map(r => r.broj_racuna);
+      return res.status(409).json({
+        message: 'Neki računi već postoje.',
+        duplicirani: vecPostoje
+      });
+    }
+
+    const spremljeni = await Promise.all(
+      racuni.map(broj_racuna =>
+        Bill.create({ korisnik_email, broj_racuna })
+      )
+    );
+
+    return res.status(201).json({
+      spremljeno: spremljeni.length,
+      racuni: spremljeni
+    });
+  } catch (err) {
+    console.error('Greška pri unosu računa:', err);
+    res.status(500).json({ message: 'Greška na poslužitelju.' });
+  }
 });
+
 
 module.exports = router;

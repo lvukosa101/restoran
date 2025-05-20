@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import '../styles/Login.css';
 import Button from '../components/Button';
+import Header from '../components/Header';
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ function Login() {
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', {
         email,
-        lozinka: password // ✅ jer backend očekuje 'lozinka', ne 'password'
+        lozinka: password
       });
 
       const user = response.data.user;
@@ -28,16 +29,11 @@ function Login() {
         return;
       }
 
-      // Spremi korisnika i token u localStorage
       localStorage.setItem('currentUser', JSON.stringify(user));
       localStorage.setItem('token', token);
 
       const role = user?.role?.toLowerCase();
 
-      console.log("Ulogirani korisnik:", user);
-      console.log("Korisnička uloga:", role);
-
-      // Preusmjeri korisnika na temelju uloge
       switch (role) {
         case "gost":
           navigate("/guest-home");
@@ -64,30 +60,33 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-      <h2>Prijava</h2>
-      <form className="login-form" onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        /><br /><br />
+    <>
+      <Header />
+      <div className="login-container">
+        <h2>Prijava</h2>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          /><br /><br />
 
-        <input
-          type="password"
-          placeholder="Lozinka"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        /><br /><br />
+          <input
+            type="password"
+            placeholder="Lozinka"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          /><br /><br />
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && <p style={{ color: "red" }}>{error}</p>}
 
-        <Button text="Prijavi se" type="submit" />
-      </form>
-    </div>
+          <Button text="Prijavi se" type="submit" />
+        </form>
+      </div>
+    </>
   );
 }
 

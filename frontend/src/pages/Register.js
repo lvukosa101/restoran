@@ -1,7 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
-import '../styles/Register.css'; 
+import '../styles/Register.css';
 import Button from '../components/Button';
+import Header from '../components/Header';
 
 function Register() {
   const [name, setName] = useState("");
@@ -27,7 +28,8 @@ function Register() {
     }
 
     setError("");
-    
+    setSuccess("");
+
     try {
       const response = await axios.post('http://localhost:5000/api/auth/register', {
         ime: name,
@@ -35,68 +37,77 @@ function Register() {
         email,
         lozinka: password,
         broj_tel: phone || '',
-        role: "gost",
+        role: "gost"
       });
-      setSuccess('Registracija uspješna! Sada se možete prijaviti.');
+
+      setSuccess("Registracija uspješna! Sada se možete prijaviti.");
       console.log("Registracija:", response.data);
     } catch (error) {
-      setError('Greška pri registraciji');
+      setError("Greška pri registraciji.");
       console.error(error);
     }
   };
 
   return (
-    <div className="register-container"> 
-      <h2>Registracija</h2>
-      <form className="register-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Ime"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        /><br /><br />
-        <input
-          type="text"
-          placeholder="Prezime"
-          value={surname}
-          onChange={(e) => setSurname(e.target.value)}
-          required
-        /><br /><br />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        /><br /><br />
-        <input
-          type="password"
-          placeholder="Lozinka"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        /><br /><br />
-        <input
-          type="password"
-          placeholder="Ponovi lozinku"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        /><br /><br />
-        <input
-          type="text"
-          placeholder="Broj telefona (opcionalno)"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        /><br /><br />
-        
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {success && <p style={{ color: "green" }}>{success}</p>}
+    <>
+      <Header />
+      <div className="register-container">
+        <h2>Registracija</h2>
+        <form className="register-form" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Ime"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          /><br /><br />
 
-        <Button text="Registriraj se" type="submit" /> 
-      </form>
-    </div>
+          <input
+            type="text"
+            placeholder="Prezime"
+            value={surname}
+            onChange={(e) => setSurname(e.target.value)}
+            required
+          /><br /><br />
+
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          /><br /><br />
+
+          <input
+            type="password"
+            placeholder="Lozinka"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          /><br /><br />
+
+          <input
+            type="password"
+            placeholder="Ponovi lozinku"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          /><br /><br />
+
+          <input
+            type="text"
+            placeholder="Broj telefona (opcionalno)"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          /><br /><br />
+
+          {error && <p style={{ color: "red" }}>{error}</p>}
+          {success && <p style={{ color: "green" }}>{success}</p>}
+
+          <Button text="Registriraj se" type="submit" />
+        </form>
+      </div>
+    </>
   );
 }
 
