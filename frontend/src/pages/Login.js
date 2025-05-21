@@ -36,10 +36,10 @@ function Login() {
 
       switch (role) {
         case "gost":
-          navigate("/guest-home");
+          navigate("/rezervacija");
           break;
         case "moderator":
-          navigate("/moderator-home");
+          navigate("/moderator-reservation");
           break;
         case "administrator":
         case "admin":

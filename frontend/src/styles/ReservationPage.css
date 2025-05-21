@@ -1,0 +1,55 @@
+.calendar-container {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.custom-select-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.select-card {
+  background-color: #fff;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  transition: all 0.2s ease-in-out;
+}
+
+.select-card:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.03);
+}
+
+.select-card.selected {
+  background-color: #d0f0d0;
+  border-color: #4caf50;
+}
+
+.section-label {
+  margin-top: 20px;
+  font-weight: bold;
+  display: block;
+}
+.restaurant-image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.restaurant-image:hover {
+  transform: scale(1.02);
+}
