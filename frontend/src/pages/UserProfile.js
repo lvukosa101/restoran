@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import HeaderLoggedIn from "../components/HeaderLoggedIn";
+import "../styles/UserProfile.css";
 
 export default function UserProfile() {
   const [racuni, setRacuni] = useState(["", "", "", "", ""]);
@@ -8,8 +9,19 @@ export default function UserProfile() {
   const [sifra, setSifra] = useState("");
   const [spremljeniRacuni, setSpremljeniRacuni] = useState([]);
   const [povijestPopusta, setPovijestPopusta] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
 
   const user = JSON.parse(localStorage.getItem("currentUser")) || {};
+
+  const [formData, setFormData] = useState({
+    ime: user.ime || "",
+    prezime: user.prezime || "",
+    email: user.email || "",
+    broj_tel: user.broj_tel || "",
+    lozinka: "",
+    staraLozinka: ""
+  });
 
   const fetchPovijest = useCallback(async () => {
     if (!user.email) return;
@@ -32,8 +44,8 @@ export default function UserProfile() {
           const racuniArray = Array.isArray(res.data.racuni)
             ? res.data.racuni
             : typeof res.data.racuni === "string"
-            ? JSON.parse(res.data.racuni)
-            : [];
+              ? JSON.parse(res.data.racuni)
+              : [];
 
           setSpremljeniRacuni(racuniArray);
           setPopustGeneriran(true);
@@ -115,119 +127,157 @@ export default function UserProfile() {
     }
   };
 
+  const handleUpdate = async () => {
+    try {
+      await axios.put("http://localhost:5000/api/users/update", {
+        ...formData,
+        korisnik_id: user.korisnik_id
+      });
+
+      if (formData.lozinka && formData.staraLozinka) {
+        try {
+          await axios.put("http://localhost:5000/api/users/update-password", {
+            korisnik_id: user.korisnik_id,
+            staraLozinka: formData.staraLozinka,
+            novaLozinka: formData.lozinka
+          });
+          setSuccessMsg("✅ Podaci i lozinka su uspješno ažurirani!");
+        } catch (err) {
+          console.error("Greška pri ažuriranju lozinke:", err);
+          alert("Stara lozinka nije točna ili je došlo do greške.");
+          return;
+        }
+      } else {
+        setSuccessMsg("✅ Podaci su uspješno ažurirani!");
+      }
+
+      const updatedUser = { ...user, ...formData };
+      delete updatedUser.lozinka;
+      delete updatedUser.staraLozinka;
+      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+
+      setModalOpen(false);
+      setFormData((prev) => ({
+        ...prev,
+        lozinka: "",
+        staraLozinka: ""
+      }));
+
+    } catch (err) {
+      console.error("Greška prilikom ažuriranja podataka:", err);
+      alert("Došlo je do pogreške pri spremanju.");
+    }
+  };
+
   return (
     <>
       <HeaderLoggedIn />
-      <div style={{ padding: "40px", maxWidth: "700px", margin: "0 auto", fontFamily: "Segoe UI" }}>
+      <div className="user-profile-container">
         <h2>Osobni profil</h2>
 
+        {successMsg && (
+          <div className="success-message">
+            {successMsg}
+          </div>
+        )}
+
         {user?.email ? (
-          <div style={{ backgroundColor: "#f5f5f5", padding: "20px", borderRadius: "10px" }}>
-            <p><strong>Ime:</strong> {user.ime}</p>
-            <p><strong>Prezime:</strong> {user.prezime}</p>
-            <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>Uloga:</strong> {user.role}</p>
+          <div className="profile-layout">
+            <div className="left-column">
+              <div className="profile-card">
+                <p><strong>Ime:</strong> {user.ime}</p>
+                <p><strong>Prezime:</strong> {user.prezime}</p>
+                <p><strong>Email:</strong> {user.email}</p>
+                <p><strong>Broj telefona:</strong> {user.broj_tel || "Nije unesen"}</p>
 
-            {!popustGeneriran && (
-              <>
-                <h4 style={{ marginTop: "30px" }}>Upiši brojeve računa:</h4>
-                {racuni.map((r, i) => (
-                  <input
-                    key={i}
-                    type="text"
-                    value={r}
-                    onChange={(e) => handleInput(i, e.target.value)}
-                    placeholder={`Račun ${i + 1}`}
-                    style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
-                  />
-                ))}
-
-                <button
-                  onClick={handleSpremi}
-                  style={{
-                    marginTop: "10px",
-                    padding: "10px 20px",
-                    backgroundColor: "#333",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer"
-                  }}
-                >
-                  Spremi račune
-                </button>
-
-                <button
-                  onClick={() => setRacuni(["", "", "", "", ""])}
-                  style={{
-                    marginTop: "10px",
-                    marginLeft: "10px",
-                    padding: "10px 20px",
-                    backgroundColor: "#aaa",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer"
-                  }}
-                >
-                  Očisti račune
-                </button>
-              </>
-            )}
-
-            {popustGeneriran && (
-              <div style={{
-                marginTop: "20px",
-                backgroundColor: "#d4edda",
-                padding: "15px",
-                borderRadius: "8px",
-                color: "#155724"
-              }}>
-                🎉 Imate aktivan popust!<br />
-                Vaši računi: {spremljeniRacuni.join(", ")}<br />
-                Vaš kod za popust je: <strong>{sifra}</strong><br />
-                <button
-                  onClick={handleIskoristiPopust}
-                  style={{
-                    marginTop: "15px",
-                    padding: "8px 16px",
-                    backgroundColor: "#dc3545",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer"
-                  }}
-                >
-                  Iskoristi popust
+                <button className="profile-button" onClick={() => setModalOpen(true)}>
+                  Promijeni podatke
                 </button>
               </div>
-            )}
+            </div>
 
-            {povijestPopusta.length > 0 && (
-              <div style={{
-                marginTop: "30px",
-                backgroundColor: "#fff3cd",
-                padding: "15px",
-                borderRadius: "8px",
-                color: "#856404"
-              }}>
-                <h4>Povijest iskorištenih popusta</h4>
-                <ul>
-                  {povijestPopusta.map((popust, index) => (
-                    <li key={index}>
-                      Kod: <strong>{popust.kod}</strong> | Računi: {Array.isArray(popust.racuni)
-                        ? popust.racuni.join(", ")
-                        : popust.racuni}
-                    </li>
+            <div className="right-column">
+              {!popustGeneriran && (
+                <>
+                  <h4>Upiši brojeve računa:</h4>
+                  {racuni.map((r, i) => (
+                    <input
+                      key={i}
+                      type="text"
+                      value={r}
+                      onChange={(e) => handleInput(i, e.target.value)}
+                      placeholder={`Račun ${i + 1}`}
+                      className="input-field"
+                    />
                   ))}
-                </ul>
-              </div>
-            )}
+
+                  <button className="profile-button" onClick={handleSpremi}>
+                    Spremi račune
+                  </button>
+
+                  <button className="profile-button secondary" onClick={() => setRacuni(["", "", "", "", ""])}>
+                    Očisti račune
+                  </button>
+                </>
+              )}
+
+              {popustGeneriran && (
+                <div className="success-box">
+                  🎉 Imate aktivan popust!<br />
+                  Vaši računi: {spremljeniRacuni.join(", ")}<br />
+                  Vaš kod za popust je: <strong>{sifra}</strong><br />
+                  <button
+                    className="profile-button"
+                    style={{ backgroundColor: "#dc3545", marginTop: "15px" }}
+                    onClick={handleIskoristiPopust}
+                  >
+                    Iskoristi popust
+                  </button>
+                </div>
+              )}
+
+              {povijestPopusta.length > 0 && (
+                <div className="warning-box">
+                  <h4>Povijest iskorištenih popusta</h4>
+                  <ul>
+                    {povijestPopusta.map((popust, index) => (
+                      <li key={index}>
+                        Kod: <strong>{popust.kod}</strong> | Računi: {Array.isArray(popust.racuni)
+                          ? popust.racuni.join(", ")
+                          : popust.racuni}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <p style={{ color: "red" }}>Niste prijavljeni.</p>
         )}
       </div>
+
+      {modalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Uredi podatke</h3>
+            <label>Ime</label>
+            <input value={formData.ime} onChange={e => setFormData({ ...formData, ime: e.target.value })} />
+            <label>Prezime</label>
+            <input value={formData.prezime} onChange={e => setFormData({ ...formData, prezime: e.target.value })} />
+            <label>Email</label>
+            <input value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
+            <label>Broj telefona</label>
+            <input value={formData.broj_tel} onChange={e => setFormData({ ...formData, broj_tel: e.target.value })} />
+            <label>Stara lozinka</label>
+            <input type="password" value={formData.staraLozinka} onChange={e => setFormData({ ...formData, staraLozinka: e.target.value })} />
+            <label>Nova lozinka</label>
+            <input type="password" value={formData.lozinka} onChange={e => setFormData({ ...formData, lozinka: e.target.value })} />
+            <button className="profile-button" onClick={handleUpdate}>Spremi</button>
+            <button className="profile-button secondary" onClick={() => setModalOpen(false)}>Odustani</button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
