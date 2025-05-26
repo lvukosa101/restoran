@@ -153,9 +153,12 @@ function ReservationPage() {
               </>
             )}
 
-            <div style={{ marginTop: "20px" }}>
-              <Button text="ODABERI" onClick={() => setShowSummary(true)} disabled={!isFormComplete} />
-            </div>
+            {isFormComplete && (
+              <div style={{ marginTop: "20px" }}>
+                <Button text="ODABERI" onClick={() => setShowSummary(true)} />
+              </div>
+            )}
+
           </div>
 
           <div>
