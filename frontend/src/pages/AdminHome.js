@@ -12,50 +12,58 @@ function AdminHome() {
   };
 
   const handlePregledRezervacija = () => {
-    navigate('/moderator-reservation'); // ✅ ISPRAVNA RUTA!
+    navigate('/moderator-reservation');
+  };
+
+  const handleDodajKorisnika = () => {
+    navigate('/admin-add-user');
   };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h2>Dobrodošli, {currentUser?.ime || 'korisniče'}!</h2>
-      <p>Ovo je početna stranica za administratora (konobara).</p>
+    <div style={{
+      textAlign: 'center',
+      marginTop: '50px',
+      fontFamily: 'Segoe UI, sans-serif'
+    }}>
+      <h2>Dobrodošli, {currentUser?.ime || 'Administrator'}!</h2>
+      <p>Ovo je administratorska kontrolna ploča.</p>
 
-      {/* GUMB ZA PREGLED REZERVACIJA */}
-      <button
-        onClick={handlePregledRezervacija}
-        style={{
-          padding: '10px 20px',
-          marginBottom: '20px',
-          backgroundColor: '#28a745',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          fontSize: '16px'
-        }}
-      >
-        Pregled rezervacija
-      </button>
+      <div style={{ marginTop: '30px' }}>
+        <button
+          onClick={handlePregledRezervacija}
+          style={buttonStyle('#28a745')}
+        >
+          📋 Pregled rezervacija
+        </button>
 
-      <br />
+        <button
+          onClick={handleDodajKorisnika}
+          style={buttonStyle('#007bff')}
+        >
+          ➕ Dodaj korisnika
+        </button>
 
-      {/* GUMB ZA ODJAVU */}
-      <button
-        onClick={handleLogout}
-        style={{
-          padding: '10px 20px',
-          backgroundColor: '#dc3545',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          fontSize: '16px'
-        }}
-      >
-        Logout
-      </button>
+        <button
+          onClick={handleLogout}
+          style={buttonStyle('#dc3545')}
+        >
+          🚪 Odjava
+        </button>
+      </div>
     </div>
   );
 }
+
+const buttonStyle = (bgColor) => ({
+  padding: '12px 24px',
+  margin: '10px',
+  backgroundColor: bgColor,
+  color: 'white',
+  border: 'none',
+  borderRadius: '6px',
+  cursor: 'pointer',
+  fontSize: '16px',
+  minWidth: '200px'
+});
 
 export default AdminHome;

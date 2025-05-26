@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt');
 const User = require('../models/User');
+const Role = require('../models/Role');
 
 router.put('/update', async (req, res) => {
   const { korisnik_id, ime, prezime, email, broj_tel } = req.body;
@@ -28,7 +30,6 @@ router.put('/update-password', async (req, res) => {
   const user = await User.findByPk(korisnik_id);
   if (!user) return res.status(404).json({ message: 'Korisnik nije pronađen' });
 
-  const bcrypt = require('bcrypt');
   const isMatch = await bcrypt.compare(staraLozinka, user.lozinka);
   if (!isMatch) return res.status(400).json({ message: 'Stara lozinka nije točna' });
 
@@ -38,5 +39,41 @@ router.put('/update-password', async (req, res) => {
   res.json({ message: 'Lozinka ažurirana' });
 });
 
+router.get('/roles', async (req, res) => {
+  try {
+    const roles = await Role.findAll();
+    res.json(roles);
+  } catch (err) {
+    console.error('Greška pri dohvaćanju uloga:', err);
+    res.status(500).json({ message: 'Greška pri dohvaćanju uloga.' });
+  }
+});
+
+router.post('/', async (req, res) => {
+  const { ime, prezime, email, lozinka, broj_tel, role_id } = req.body;
+
+  try {
+    const postoji = await User.findOne({ where: { email } });
+    if (postoji) {
+      return res.status(400).json({ message: 'Korisnik s ovim emailom već postoji.' });
+    }
+
+    const hashed = await bcrypt.hash(lozinka, 10);
+
+    const novi = await User.create({
+      ime,
+      prezime,
+      email,
+      lozinka: hashed,
+      broj_tel,
+      role_id
+    });
+
+    res.status(201).json({ message: 'Korisnik dodan.', korisnik: novi });
+  } catch (err) {
+    console.error('❌ Greška pri dodavanju korisnika:', err);
+    res.status(500).json({ message: 'Greška na serveru.' });
+  }
+});
 
 module.exports = router;

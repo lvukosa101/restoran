@@ -7,12 +7,10 @@ const authRoutes = require('./routes/authRoutes');
 const reservationRoutes = require('./routes/reservation');
 const billRoutes = require('./routes/bill');
 const discountRoutes = require('./routes/discount');
-const contactRoute = require('./routes/contact');
 const userRoutes = require('./routes/user');
+const { router: contactRoute } = require('./routes/contact');
 
 const app = express();
-
-
 
 app.use(cors());
 app.use(express.json());

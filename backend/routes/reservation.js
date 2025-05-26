@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Reservation = require('../models/Reservation');
+const { transporter } = require('./contact');
 
 // ✅ POST – nova rezervacija
 router.post('/', async (req, res) => {
   try {
     const { datum, vrijeme, broj_stola } = req.body;
 
-    console.log("🔽 Novi zahtjev za rezervaciju:", req.body);
+    //console.log("🔽 Novi zahtjev za rezervaciju:", req.body);
 
     const existing = await Reservation.findOne({
       where: { datum, vrijeme, broj_stola }
@@ -38,7 +39,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ✅ PUT – ažuriranje statusa
 router.put('/:id/status', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -52,7 +52,34 @@ router.put('/:id/status', async (req, res) => {
     rezervacija.status = status;
     await rezervacija.save();
 
-    res.json({ message: 'Status uspješno ažuriran.', rezervacija });
+    const poruka =
+      status === 'Odobreno'
+        ? 'Vaša rezervacija je <strong>ODOBRENA</strong>. Vidimo se u restoranu! 🍽️'
+        : 'Nažalost, vaša rezervacija je <strong>ODBIJENA</strong>. Pokušajte s drugim terminom.';
+
+    const mailOptions = {
+      from: '"Restoran Delicije" <laura1331.lz@gmail.com>',
+      to: rezervacija.korisnik_email,
+      subject: `Rezervacija - ${status}`,
+      html: `
+        <div style="font-family:Arial,sans-serif;padding:20px;">
+          <h2 style="color:#2c3e50;">Obavijest o rezervaciji</h2>
+          <p>Poštovani <strong>${rezervacija.korisnik_ime} ${rezervacija.korisnik_prezime}</strong>,</p>
+          <p>${poruka}</p>
+          <table style="margin-top:20px;">
+            <tr><td><strong>Datum:</strong></td><td>${rezervacija.datum}</td></tr>
+            <tr><td><strong>Vrijeme:</strong></td><td>${rezervacija.vrijeme}</td></tr>
+            <tr><td><strong>Stol:</strong></td><td>${rezervacija.broj_stola}</td></tr>
+          </table>
+          <p style="margin-top:25px;">Zahvaljujemo na korištenju našeg sustava rezervacija!</p>
+          <p><em>Vaš restoran</em></p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.json({ message: 'Status ažuriran i email poslan.', rezervacija });
   } catch (error) {
     console.error('❌ Greška pri ažuriranju statusa:', error);
     res.status(500).json({ message: 'Greška na poslužitelju.' });
@@ -149,6 +176,5 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ message: 'Greška na poslužitelju.' });
   }
 });
-
 
 module.exports = router;

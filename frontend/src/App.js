@@ -10,6 +10,7 @@ import AdminHome from './pages/AdminHome';
 import ReservationPage from './pages/ReservationPage';
 import ModeratorReservation from './pages/ModeratorReservation';
 import UserProfile from './pages/UserProfile';
+import AdminAddUser from './pages/AdminAddUser';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
       <Route path="/rezervacija" element={<ReservationPage />} />
       <Route path="/moderator-reservation" element={<ModeratorReservation />} />
       <Route path="/user-profile" element={<UserProfile />} />
+      <Route path="/admin-add-user" element={<AdminAddUser />} />
     </Routes>
   );
 }
