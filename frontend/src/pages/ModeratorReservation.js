@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import HeaderLoggedIn from "../components/HeaderLoggedIn";
 import HeaderAdmin from "../components/HeaderAdmin";
+import HeaderModerator from "../components/HeaderModerator";
 
 export default function ModeratorReservation() {
   const [rezervacije, setRezervacije] = useState([]);
@@ -48,7 +49,13 @@ export default function ModeratorReservation() {
 
   return (
     <>
-      {currentUser?.role === 'administrator' ? <HeaderAdmin /> : <HeaderLoggedIn />}
+      {currentUser?.role === 'administrator' ? (
+        <HeaderAdmin />
+      ) : currentUser?.role === 'moderator' ? (
+        <HeaderModerator />
+      ) : (
+        <HeaderLoggedIn />
+      )}
       <div style={{ padding: '40px', fontFamily: 'Segoe UI, sans-serif', maxWidth: '95%', margin: '0 auto' }}>
         <div style={{
           backgroundColor: '#2c2c2c',

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import HeaderLoggedIn from "../components/HeaderLoggedIn";
+import HeaderModerator from "../components/HeaderModerator";
 import "../styles/UserProfile.css";
 
 export default function UserProfile() {
@@ -171,7 +172,11 @@ export default function UserProfile() {
 
   return (
     <>
-      <HeaderLoggedIn />
+      {user?.role === 'moderator' ? (
+        <HeaderModerator />
+      ) : (
+        <HeaderLoggedIn />
+      )}
       <div className="user-profile-container">
         <h2>Osobni profil</h2>
 

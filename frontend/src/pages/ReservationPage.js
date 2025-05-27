@@ -4,6 +4,7 @@ import "react-calendar/dist/Calendar.css";
 import Button from "../components/Button";
 import axios from "axios";
 import HeaderLoggedIn from "../components/HeaderLoggedIn";
+import HeaderModerator from "../components/HeaderModerator";
 import "../styles/ReservationPage.css";
 
 const sviTermini = ["12:00", "14:00", "16:00", "18:00", "20:00"];
@@ -25,6 +26,8 @@ function ReservationPage() {
   const [reservationConfirmed, setReservationConfirmed] = useState(false);
   const [zauzetiTerminiPoStolu, setZauzetiTerminiPoStolu] = useState({});
   const [confirmedData, setConfirmedData] = useState(null);
+  
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -97,8 +100,11 @@ function ReservationPage() {
 
   return (
     <>
-      <HeaderLoggedIn />
-
+      {currentUser?.role === 'moderator' ? (
+        <HeaderModerator />
+      ) : (
+        <HeaderLoggedIn />
+      )}
       <div style={{ padding: "40px", position: "relative" }}>
         <h2>REZERVACIJA TERMINA</h2>
 
