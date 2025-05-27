@@ -19,7 +19,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "system-test": "node tests/systemTest.js"
   },
   "eslintConfig": {
     "extends": [
@@ -38,5 +39,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "chromedriver": "^136.0.3",
+    "selenium-webdriver": "^4.33.0"
   }
 }

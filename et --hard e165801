@@ -1,0 +1,17 @@
+[33mc5100b3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Optimizicija i ispravak za unos računa i dobivanje popusta, osposobljena kontakt forma za slanje mail poruke
+[33m540b403[m Backend-rezervacija i osobni profil-doraditi!
+[33me165801[m Dodani backend i frontend za korisnički profil i konobarski pregled rezervacija; treba doraditi logiku za račune
+[33m63e4cf0[m Dodan frontend - dizajn za početnu stranicu
+[33ma475288[m Kreiranje backend-a i omogućavanje registracije i prijave korisnika
+[33mb4d7089[m Dodavanje frontend-a za korisnika(stranica rezervacije stola i termina.)
+[33m3484453[m Dodana lokalna baza korisnika i početne stranice za role
+[33m9b935e9[m Dodane komponente i pocetni dizajn
+[33m8023276[m Dodane stranice za login i registraciju
+[33m5c0c50e[m vjezbica
+[33m82c443f[m vjezba 3
+[33mec67dd6[m Merge branch 'main' of https://github.com/lvukosa101/restoran
+[33m623b84d[m vjezba2
+[33m2e1e569[m Vjezba
+[33m885a395[m Dodana backend mapa s README fajlom
+[33m7d7c77f[m Dodana React aplikacija u frontend folder
+[33mafbe2df[m Initial commit
