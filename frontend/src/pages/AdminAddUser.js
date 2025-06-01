@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '../api/axios';
 import HeaderAdmin from '../components/HeaderAdmin';
 import '../styles/AdminAddUser.css';
 
@@ -18,7 +18,7 @@ export default function AdminAddUser() {
   const [poruka, setPoruka] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/users/roles')
+    axios.get('/users/roles')
       .then(res => setRoles(res.data))
       .catch(() => setPoruka('Greška pri dohvaćanju uloga.'));
   }, []);
@@ -26,7 +26,7 @@ export default function AdminAddUser() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/users', form);
+      await axios.post('/users', form);
       setPoruka('✅ Korisnik dodan uspješno!');
       setForm({ ime: '', prezime: '', email: '', lozinka: '', broj_tel: '', role_id: '' });
     } catch (err) {

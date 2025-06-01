@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from "../api/axios"; 
 import HeaderLoggedIn from "../components/HeaderLoggedIn";
 import HeaderAdmin from "../components/HeaderAdmin";
 import HeaderModerator from "../components/HeaderModerator";
@@ -15,7 +15,7 @@ export default function ModeratorReservation() {
 
   const fetchRezervacije = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/rezervacije');
+      const response = await axios.get('/rezervacije');
       setRezervacije(response.data);
     } catch (err) {
       console.error('Greška pri dohvaćanju rezervacija:', err);
@@ -24,7 +24,7 @@ export default function ModeratorReservation() {
 
   const promijeniStatus = async (id, noviStatus) => {
     try {
-      await axios.put(`http://localhost:5000/api/rezervacije/${id}/status`, { status: noviStatus });
+      await axios.put(`/rezervacije/${id}/status`, { status: noviStatus });
       fetchRezervacije();
       alert(`Mail korisniku je poslan! Rezervacija je ${noviStatus.toLowerCase()}.`);
     } catch (err) {
@@ -36,7 +36,7 @@ export default function ModeratorReservation() {
   const obrisiRezervaciju = async (id) => {
     if (!window.confirm("Jeste li sigurni da želite obrisati ovu rezervaciju?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/rezervacije/${id}`);
+      await axios.delete(`/rezervacije/${id}`);
       fetchRezervacije();
     } catch (err) {
       console.error("Greška pri brisanju rezervacije:", err);

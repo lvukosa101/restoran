@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+import axios from "../api/axios"; 
 import HeaderLoggedIn from "../components/HeaderLoggedIn";
 import HeaderModerator from "../components/HeaderModerator";
 import "../styles/UserProfile.css";
@@ -130,9 +130,14 @@ export default function UserProfile() {
 
   const handleUpdate = async () => {
     try {
+      const token = localStorage.getItem("token");
       await axios.put("http://localhost:5000/api/users/update", {
         ...formData,
         korisnik_id: user.korisnik_id
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
 
       if (formData.lozinka && formData.staraLozinka) {
@@ -141,6 +146,10 @@ export default function UserProfile() {
             korisnik_id: user.korisnik_id,
             staraLozinka: formData.staraLozinka,
             novaLozinka: formData.lozinka
+          }, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           });
           setSuccessMsg("✅ Podaci i lozinka su uspješno ažurirani!");
         } catch (err) {

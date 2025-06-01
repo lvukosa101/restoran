@@ -67,7 +67,7 @@ function Login() {
         <form className="login-form" onSubmit={handleSubmit}>
           <input
             type="email"
-            name="email"                          // ✅ Dodano za Selenium
+            name="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -76,7 +76,7 @@ function Login() {
 
           <input
             type="password"
-            name="password"                       // ✅ Dodano za Selenium
+            name="password"
             placeholder="Lozinka"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

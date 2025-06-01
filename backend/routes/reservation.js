@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Reservation = require('../models/Reservation');
+const { verifyToken, allowRoles } = require('../middleware/authMiddleware');
 const { transporter } = require('./contact');
 
-// ✅ POST – nova rezervacija
-router.post('/', async (req, res) => {
+// POST – nova rezervacija
+router.post('/', verifyToken, async (req, res) => {
   try {
     const { datum, vrijeme, broj_stola } = req.body;
 
@@ -26,7 +27,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ✅ GET – sve rezervacije
+// GET – sve rezervacije
 router.get('/', async (req, res) => {
   try {
     const sve = await Reservation.findAll({
@@ -39,7 +40,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.put('/:id/status', async (req, res) => {
+//put - promjena statusa - konobar ili administrator
+router.put('/:id/status', verifyToken, allowRoles('moderator', 'administrator'), async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
@@ -86,7 +88,7 @@ router.put('/:id/status', async (req, res) => {
   }
 });
 
-// ✅ GET – zauzeti termini za odabrani datum
+// GET – zauzeti termini za odabrani datum
 router.get('/zauzeti-termini', async (req, res) => {
   try {
     const { datum } = req.query;
@@ -108,7 +110,7 @@ router.get('/zauzeti-termini', async (req, res) => {
   }
 });
 
-// ✅ GET – zauzeti termini za određeni datum i stol
+// GET – zauzeti termini za određeni datum i stol
 router.get('/zauzeti-termini-za-stol', async (req, res) => {
   try {
     const { datum, broj_stola } = req.query;
@@ -130,7 +132,7 @@ router.get('/zauzeti-termini-za-stol', async (req, res) => {
   }
 });
 
-// ✅ NOVO – zauzeti stolovi po terminu za određeni datum
+// zauzeti stolovi po terminu za određeni datum
 router.get('/zauzeti-termini-po-datumu', async (req, res) => {
   try {
     const { datum } = req.query;
@@ -159,8 +161,8 @@ router.get('/zauzeti-termini-po-datumu', async (req, res) => {
   }
 });
 
-// DELETE – brisanje rezervacije po ID-u
-router.delete('/:id', async (req, res) => {
+// DELETE – brisanje rezervacije po ID-u - konobar ili admin
+router.delete('/:id', verifyToken, allowRoles('moderator', 'administrator'), async (req, res) => {
   try {
     const { id } = req.params;
 

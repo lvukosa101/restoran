@@ -7,6 +7,7 @@ function HeaderAdmin() {
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem("token");
     navigate('/');
     window.location.reload();
   };

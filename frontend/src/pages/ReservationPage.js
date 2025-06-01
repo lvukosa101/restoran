@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import Button from "../components/Button";
-import axios from "axios";
+import axios from "../api/axios"; 
 import HeaderLoggedIn from "../components/HeaderLoggedIn";
 import HeaderModerator from "../components/HeaderModerator";
 import "../styles/ReservationPage.css";

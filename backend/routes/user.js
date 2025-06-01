@@ -3,9 +3,16 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const Role = require('../models/Role');
+const { verifyToken, allowRoles } = require('../middleware/authMiddleware');
 
-router.put('/update', async (req, res) => {
+// ažuriranje korisničkih podataka - samo prijavljeni korisnik
+router.put('/update', verifyToken, async (req, res) => {
   const { korisnik_id, ime, prezime, email, broj_tel } = req.body;
+
+  // Provjera da li korisnik mijenja SAM SEBE
+  if (req.user.userId !== korisnik_id && req.user.role !== 'administrator') {
+    return res.status(403).json({ poruka: "Nemate pravo ažurirati druge korisnike." });
+  }
 
   try {
     const user = await User.findByPk(korisnik_id);
@@ -25,8 +32,14 @@ router.put('/update', async (req, res) => {
   }
 });
 
-router.put('/update-password', async (req, res) => {
+// promjena lozinke - samo prijavljeni korisnik
+router.put('/update-password', verifyToken, async (req, res) => {
   const { korisnik_id, staraLozinka, novaLozinka } = req.body;
+
+  if (req.user.userId !== korisnik_id) {
+    return res.status(403).json({ message: 'Nemate dopuštenje mijenjati tu lozinku' });
+  }
+
   const user = await User.findByPk(korisnik_id);
   if (!user) return res.status(404).json({ message: 'Korisnik nije pronađen' });
 
@@ -39,7 +52,8 @@ router.put('/update-password', async (req, res) => {
   res.json({ message: 'Lozinka ažurirana' });
 });
 
-router.get('/roles', async (req, res) => {
+// dohvat uloga 
+router.get('/roles', verifyToken, allowRoles('administrator'), async (req, res) => {
   try {
     const roles = await Role.findAll();
     res.json(roles);
@@ -49,7 +63,8 @@ router.get('/roles', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+// dodavanje korisnika - samo admin
+router.post('/', verifyToken, allowRoles('administrator'), async (req, res) => {
   const { ime, prezime, email, lozinka, broj_tel, role_id } = req.body;
 
   try {
